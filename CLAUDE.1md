@@ -1,0 +1,93 @@
+# Project Context: Agent-stuff
+
+## Overview
+This repository contains Claude Code skills, plugins, and agents for use across various projects. Primary tech stack includes Python, Java, and React/Angular.
+
+## Project Structure
+```
+agent-stuff/
+├── skills/              # Claude Code skills
+│   └── commit/          # Git commit skill (Conventional Commits)
+├── CLAUDE.1md          # This file - Claude assistant guidelines
+└── README.md           # Project documentation
+```
+
+## Tech Stack
+- **Primary Languages**: Python, Java, JavaScript/TypeScript (React/Angular)
+- **Version Control**: Git with Conventional Commits format
+- **Claude Code**: Skills framework for custom commands
+
+## Development Guidelines
+
+### Python Best Practices
+When working with Python code in this project:
+- Follow PEP 8 style guidelines
+- Use type hints for function signatures
+- Write docstrings for non-trivial functions
+- Use virtual environments (prefer `uv` for modern projects)
+- Apply linters: Ruff (formatting/linting), Mypy (type checking)
+- Follow DRY principle and maintain modularity
+- Implement proper error handling with specific exceptions
+- Write tests following TDD principles when appropriate
+
+### Git Commit Convention
+Use the `/commit` skill for all commits. Format:
+```
+<jira><type>(<scope>): <summary>
+```
+- `jira`: REQUIRED (e.g., PROJ-123)
+- `type`: feat, fix, docs, refactor, chore, test, perf
+- `scope`: OPTIONAL - affected area (e.g., api, parser, ui)
+- `summary`: REQUIRED - imperative mood, <= 72 chars, no period
+
+### Available Skills
+- `/commit` - Create git commits with Conventional Commits format
+- More skills can be added to the `skills/` directory
+
+## Assistant Guidelines
+
+### 1. Plan Mode Default
+- Enter plan mode for any non-trivial task (3+ steps or architectural decisions)
+- Stop and re-plan immediately if something goes wrong
+- Use plan mode for verification, not just implementation
+- Write detailed specifications upfront to reduce ambiguity
+
+### 2. Subagent Strategy
+- Use subagents liberally to keep main context window clean
+- Offload research, exploration, and parallel analysis
+- Assign one task per subagent for focused execution
+
+### 3. Self-Improvement Loop
+- After user corrections, update tasks/lessons.md with relevant patterns
+- Create rules to prevent repeating mistakes
+- Review lessons at session start when relevant
+
+### 4. Verification Before Done
+- Never mark task complete without proving it works
+- Ask: “Would a staff engineer approve this?”
+- Run tests, check logs, demonstrate correctness
+
+### 5. Demand Elegance (Balanced)
+- For non-trivial changes, consider if there's a more elegant solution
+- Implement the solution you'd choose knowing everything you know now
+- Don't over-engineer simple fixes
+- Critically evaluate your own work before presenting
+
+### 6. Autonomous Bug Fixing
+- Fix bugs without unnecessary guidance
+- Review logs, errors, failing tests, then resolve
+- Avoid requiring context switching from the user
+- Fix failing CI tests proactively
+
+## Task Management
+1. **Plan First**: Write plan to tasks/todo.md with checkable items
+2. **Verify Plan**: Review before starting implementation
+3. **Track Progress**: Mark items complete as you go
+4. **Explain Changes**: Provide high-level summary at each step
+5. **Document Results**: Add review section to tasks/todo.md
+6. **Capture Lessons**: Update tasks/lessons.md after corrections
+
+## Core Principles
+- **Simplicity First**: Make changes as simple as possible, minimize impact
+- **No Laziness**: Identify root causes, avoid temporary fixes
+- **Minimal Impact**: Touch only what's necessary, avoid new bugs
