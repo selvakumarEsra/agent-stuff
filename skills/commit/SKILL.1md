@@ -1,36 +1,100 @@
 ---
 name: commit
-description: "Read this skill before making git commits"
+description: Use when creating git commits. Invoke for Conventional Commits format, JIRA ticket integration, commit message formatting.
+
+metadata:
+  author: selvakumaresra
+  version: "1.0.0"
+  domain: workflow
+  triggers: git commit, commit changes, save work, make commit
+  role: assistant
+  scope: git
+  output-format: command
+  related-skills: code-reviewer, feature-forge
 ---
 
-Create a git commit for the current changes using a concise Conventional Commits-style subject.
+# Commit
 
-## Format
+Git commit specialist using Conventional Commits format with JIRA ticket integration.
+
+## Role Definition
+
+You are a git workflow specialist ensuring consistent, informative commit messages across the project. You follow the Conventional Commits specification with JIRA ticket integration, creating clear, traceable commit history.
+
+## When to Use This Skill
+
+- Creating git commits for any code changes
+- Formatting commit messages with Conventional Commits
+- Integrating JIRA ticket IDs into commit messages
+- Committing specific files or file patterns
+- Handling file selection ambiguity
+
+## Core Workflow
+
+1. **Parse arguments** - Check for file paths/globs and additional instructions
+2. **Review changes** - Run `git status` and `git diff` to understand modifications
+3. **Check context** - Run `git log -n 50 --pretty=format:%s` for scope patterns
+4. **Clarify** - Ask user about ambiguous files if needed
+5. **Stage** - `git add` intended files (or all if none specified)
+6. **Commit** - `git commit -m "<subject>"` with proper format
+
+## Commit Format
 
 `<jira><type>(<scope>): <summary>`
 
-- `jira` REQUIRED. Ask for JIRA ticket ID if not available. Store the ticket ID for future commits in the same session. Format: uppercase letters, digits, hyphen (e.g., `PROJ-123`).
-- `type` REQUIRED. Use `feat` for new features, `fix` for bug fixes. Other common types: `docs`, `refactor`, `chore`, `test`, `perf`.
-- `scope` OPTIONAL. Short noun in parentheses for the affected area (e.g., `api`, `parser`, `ui`).
-- `summary` REQUIRED. Short, imperative, <= 72 chars, no trailing period.
+| Component | Required | Description | Example |
+|-----------|----------|-------------|---------|
+| `jira` | YES | JIRA ticket ID, uppercase letters, digits, hyphen | `PROJ-123`, `GG-3245` |
+| `type` | YES | Commit type: feat, fix, docs, refactor, chore, test, perf | `feat`, `fix` |
+| `scope` | no | Affected area in parentheses | `(api)`, `(parser)`, `(ui)` |
+| `summary` | YES | Imperative mood, <=72 chars, no trailing period | `add user authentication` |
 
-## Notes
+### Commit Types
 
-- Body is OPTIONAL. If needed, add a blank line after the subject and write short paragraphs.
-- Do NOT include breaking-change markers or footers.
-- Do NOT add sign-offs (no `Signed-off-by`).
-- Only commit; do NOT push.
-- If it is unclear whether a file should be included, ask the user which files to commit.
-- Treat any caller-provided arguments as additional commit guidance. Common patterns:
-  - Freeform instructions should influence scope, summary, and body.
-  - File paths or globs should limit which files to commit. If files are specified, only stage/commit those unless the user explicitly asks otherwise.
-  - If arguments combine files and instructions, honor both.
+| Type | Usage |
+|------|-------|
+| `feat` | New feature |
+| `fix` | Bug fix |
+| `docs` | Documentation only |
+| `refactor` | Code change that neither fixes a bug nor adds a feature |
+| `chore` | Maintenance tasks, dependencies, tooling |
+| `test` | Adding or updating tests |
+| `perf` | Performance improvement |
 
-## Steps
+## Constraints
 
-1. Infer from the prompt if the user provided specific file paths/globs and/or additional instructions.
-2. Review `git status` and `git diff` to understand the current changes (limit to argument-specified files if provided).
-3. (Optional) Run `git log -n 50 --pretty=format:%s` to see commonly used scopes.
-4. If there are ambiguous extra files, ask the user for clarification before committing.
-5. Stage only the intended files (all changes if no files specified).
-6. Run `git commit -m "<subject>"` (and `-m "<body>"` if needed).
+### MUST DO
+- Include JIRA ticket ID in every commit
+- Ask for JIRA ticket ID if not provided (store for session)
+- Use imperative mood in summary (e.g., "add" not "added" or "adds")
+- Keep summary <= 72 characters
+- Limit to committed files if file paths provided
+- Ask for clarification on ambiguous files
+
+### MUST NOT DO
+- Add trailing period to summary
+- Include breaking-change markers or footers
+- Add sign-offs (no `Signed-off-by`)
+- Push commits (only commit, never push)
+- Commit files without user confirmation when ambiguous
+
+## Argument Handling
+
+| Argument Type | Behavior |
+|---------------|----------|
+| File paths/globs | Stage and commit only those files |
+| Freeform instructions | Influence scope, summary, and body |
+| Combined | Honor both file selection and guidance |
+| None | Commit all staged changes (or stage all if needed) |
+
+## Output Templates
+
+When creating commits, provide:
+1. JIRA ticket ID confirmation
+2. Commit type and scope selection
+3. Formatted commit message preview
+4. Git command execution confirmation
+
+## Knowledge Reference
+
+Conventional Commits specification, JIRA integration patterns, git staging and commit workflow, semantic versioning, changelog generation
